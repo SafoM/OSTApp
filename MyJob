@@ -1,0 +1,61 @@
+
+import android.app.Activity;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+/**
+ * Created by kille on 2017-07-22.
+ */
+
+public class MyJob extends Activity {
+
+    private Button sosButton;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.myjob);
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int heright = dm.heightPixels;
+        getWindow().setLayout((int)(width*.8),(int)(heright *.6));
+
+        TextView jobName = (TextView) findViewById(R.id.textJobName);
+        TextView jobDescription = (TextView) findViewById(R.id.textDescription);
+
+        sosButton = (Button) findViewById(R.id.sosButton);
+        if (Main2Activity.getServerConnection().getCurrentTask().getSos()) {
+            sosButton.setBackgroundColor(Color.parseColor("#FF0000"));
+        }else {
+            sosButton.setBackgroundColor(Color.parseColor("#ffffbb33"));
+        }
+
+        jobName.setText(ServerConnection.getCurrentTaskName());
+        jobDescription.setText(ServerConnection.getCurrentTaskDescription());
+    }
+
+
+    public void sos (View v) {
+        if (Main2Activity.getServerConnection().getCurrentTask().getSos()) {
+            v.setBackgroundColor(Color.parseColor("#ffffbb33"));
+            Main2Activity.getServerConnection().turnOffSos();
+        }else {
+            Main2Activity.getServerConnection().sosTask();
+            v.setBackgroundColor(Color.parseColor("#FF0000"));
+        }
+    }
+
+    public void finish(View v) {
+        Main2Activity.getServerConnection().finishJob();
+        onBackPressed();
+    }
+
+    public void back(View v) {
+        onBackPressed();
+    }
+}

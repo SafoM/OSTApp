@@ -1,0 +1,29 @@
+import android.util.Log;
+import com.DeployServer.Tasks;
+import java.util.ArrayList;
+
+/**
+ * Created by kille on 2017-07-17.
+ */
+
+public class TasksUpdater extends Thread{
+
+    private Main2Activity act;
+
+    private static ArrayList<Tasks> listOfTasks = new ArrayList();
+
+    public TasksUpdater(Main2Activity act) {
+        this.act = act;
+    }
+
+
+    public static void setTasks(ArrayList<Tasks> tasks) {
+        listOfTasks = tasks;
+    }
+
+    public static ArrayList<Tasks> getTasks() {
+        return listOfTasks;
+    }
+
+
+}

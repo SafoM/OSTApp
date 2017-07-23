@@ -1,0 +1,60 @@
+
+/**
+ * Created by kille on 2017-07-16.
+ */
+
+public class Tasks {
+
+
+    private static final long serialVersionUID = 1L;
+    private String name;
+    private String description;
+    private String assignedTech;
+    private boolean completed;
+    private boolean sos = false;
+
+    public Tasks (String taskName, String taskDescription) {
+        name = taskName;
+        description = taskDescription;
+        assignedTech = "none";
+        completed = false;
+    }
+
+
+    public void setCompleted() {
+
+        completed = true;
+    }
+
+    public String getTaskDescription() {
+        return description;
+    }
+
+    public String getTaskName() {
+        return name;
+    }
+
+    public boolean isItCompleted() {
+        return completed;
+    }
+
+    public String getTech() {
+        return assignedTech;
+    }
+
+    public void assignTech(String tech) {
+        assignedTech = tech;
+    }
+
+    public void setSos(boolean bool){
+        sos = bool;
+    }
+
+    public boolean getSos() {
+        return sos;
+    }
+
+
+}
+
+

@@ -2,7 +2,6 @@
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
@@ -51,6 +50,8 @@ public class ServerConnection extends Thread {
                 }else if (message.equals("accepted")) {
                     onJob = true;
                 }else if (message.equals("no")) {
+                    onJob = false;
+                    currentTask = null;
                     Log.e("debug","DENIED!");
                 }
             }
@@ -59,3 +60,126 @@ public class ServerConnection extends Thread {
             Log.e("debug", e.getMessage());
         }
     }
+
+    public void sendMessage(String message) {
+        printWriter.println(message);
+
+    }
+
+    public void sosTask() {
+        printWriter.println("SOS-"+currentTask.getTaskName());
+        printWriter.print(currentTask.getTaskDescription());
+        printWriter.println("done");
+        currentTask.setSos(true);
+    }
+
+    public ArrayList<Tasks> getTasks(PrintWriter printWriter, BufferedReader bufferedReader)throws Exception {
+        ArrayList<Tasks> receivedTasks = new ArrayList<Tasks>();
+        int numberOfTasks;
+        printWriter.println("t");
+        String isSos = bufferedReader.readLine();
+        if (isSos.equals("yes")) {
+            sosTasks = true;
+            numberOfSosTasks = Integer.parseInt(bufferedReader.readLine());
+            for (int i = 0; i < numberOfSosTasks; i++) {
+                sosTasksS[i][0] = bufferedReader.readLine();
+                String msg = "";
+                sosTasksS[i][1] = "";
+                while(!(msg.equals("done"))) {
+                    if (!(msg.equals(""))) {
+                        sosTasksS[i][1] = sosTasksS[i][1] + msg;
+                    }
+                    msg = bufferedReader.readLine();
+                    if (!(sosTasksS[i][1].equals(""))) {
+                        sosTasksS[i][1] = sosTasksS[i][1] +"\n";
+                    }
+                }
+            }
+        }else if (isSos.equals("no")) {
+            sosTasks = false;
+            numberOfSosTasks = 0;
+        }
+
+
+        numberOfTasks = Integer.parseInt(bufferedReader.readLine());
+        if (numberOfTasks >= 0) {
+            for (int i = 0; i < numberOfTasks; i++) {
+                String name;
+                String description= "";
+                String msg = "";
+                name = bufferedReader.readLine();
+                while(!(msg.equals("done"))) {
+                    if (!(msg.equals(""))) {
+                        description = description + msg;
+                    }
+                    if (!(description.equals(""))) {
+                        description = description +"\n";
+                    }
+                    msg = bufferedReader.readLine();
+                }
+                //bufferedReader.readLine();
+                //printWriter.println(".");
+                receivedTasks.add(i, new Tasks(name, description));
+            }
+        }
+        return receivedTasks;
+
+    }
+    public boolean isOnJob() {
+        return onJob;
+    }
+
+    public void acceptTask(Tasks acceptedTask) {
+        printWriter.println("Accept:"+acceptedTask.getTaskName());
+        currentTask = acceptedTask;
+    }
+
+    public static String getCurrentTaskName() {
+        return currentTask.getTaskName();
+    }
+
+    public boolean sosTasks() {
+        return sosTasks;
+    }
+
+    public void finishJob() {
+        if (currentTask.getSos()) {
+            turnOffSos();
+        }
+        printWriter.println("Finish:"+currentTask.getTaskName());
+        currentTask = null;
+        onJob = false;
+    }
+
+    public void turnOffSos() {
+        printWriter.println("SOS:"+currentTask.getTaskName());
+        currentTask.setSos(false);
+    }
+
+    public static String getCurrentTaskDescription() {
+        return currentTask.getTaskDescription();
+    }
+
+    public Tasks getCurrentTask() {
+
+        return currentTask;
+    }
+
+    public int getNumberOfSosTasks () {
+
+        return numberOfSosTasks;
+    }
+
+    public void stopConnection() {
+        isRunning = false;
+    }
+
+    public String sosTaskND(byte first, byte second) {
+        return sosTasksS[first][second];
+    }
+
+    public String tasksReceived() {
+        return messageReceived;
+    }
+
+}

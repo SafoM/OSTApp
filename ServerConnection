@@ -1,5 +1,4 @@
 
-
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -48,12 +47,14 @@ public class ServerConnection extends Thread {
                 if (message.equals("new")) {
                     TasksUpdater.setTasks(getTasks(printWriter,bufferedReader));
                     act.addToList();
-                }else if (message.equals("accepted")) {
-                    onJob = true;
                 }else if (message.equals("no")) {
+                    act.showMessage("Someone jacked yo shit bitch !");
                     onJob = false;
                     currentTask = null;
                     Log.e("debug","DENIED!");
+                }else if (message.equals("continue")) {
+                    onJob = true;
+                    act.showMessage("Go ahead and do your job!");
                 }
             }
             socket.close();

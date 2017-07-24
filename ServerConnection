@@ -1,4 +1,5 @@
 
+
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -101,27 +102,25 @@ public class ServerConnection extends Thread {
         }
 
 
-        numberOfTasks = Integer.parseInt(bufferedReader.readLine());
-        if (numberOfTasks >= 0) {
-            for (int i = 0; i < numberOfTasks; i++) {
-                String name;
-                String description= "";
-                String msg = "";
-                name = bufferedReader.readLine();
-                while(!(msg.equals("done"))) {
-                    if (!(msg.equals(""))) {
+            numberOfTasks = Integer.parseInt(bufferedReader.readLine());
+            if (numberOfTasks >= 0) {
+                for (int i = 0; i < numberOfTasks; i++) {
+                    String name;
+                    String description= "";
+                    String msg = "";
+                    name = bufferedReader.readLine();
+                    while(!(msg.equals("done"))) {
                         description = description + msg;
+                        if (!(description.equals(""))) {
+                            description = description +"\n";
+                        }
+                        msg = bufferedReader.readLine();
                     }
-                    if (!(description.equals(""))) {
-                        description = description +"\n";
-                    }
-                    msg = bufferedReader.readLine();
+                    //bufferedReader.readLine();
+                    //printWriter.println(".");
+                    receivedTasks.add(i, new Tasks(name, description));
                 }
-                //bufferedReader.readLine();
-                //printWriter.println(".");
-                receivedTasks.add(i, new Tasks(name, description));
             }
-        }
         return receivedTasks;
 
     }

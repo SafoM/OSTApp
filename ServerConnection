@@ -1,6 +1,6 @@
 
-import android.util.Log;
 
+import android.util.Log;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -45,9 +45,12 @@ public class ServerConnection extends Thread {
             String message;
             while ((message = bufferedReader.readLine()) != null) {
                 if (message.equals("new")) {
+                    if (!act.isVisible()) {
+                        act.showNotification();
+                    }
                     TasksUpdater.setTasks(getTasks(printWriter,bufferedReader));
                     act.addToList();
-                }else if (message.equals("no")) {
+                }else if (message.equals("notaccepted")) {
                     act.showMessage("Someone jacked yo shit bitch !");
                     onJob = false;
                     currentTask = null;
@@ -68,9 +71,11 @@ public class ServerConnection extends Thread {
 
     }
 
-    public void sosTask() {
+    public void sosTask(String notes) {
         printWriter.println("SOS-"+currentTask.getTaskName());
         printWriter.print(currentTask.getTaskDescription());
+        printWriter.println("done");
+        printWriter.print(notes+"\n");
         printWriter.println("done");
         currentTask.setSos(true);
     }
@@ -88,14 +93,23 @@ public class ServerConnection extends Thread {
                 String msg = "";
                 sosTasksS[i][1] = "";
                 while(!(msg.equals("done"))) {
-                    if (!(msg.equals(""))) {
-                        sosTasksS[i][1] = sosTasksS[i][1] + msg;
-                    }
+                    boolean other = false;
+                    sosTasksS[i][1] = sosTasksS[i][1] + msg;
+
                     msg = bufferedReader.readLine();
+                    if (msg.equals("notes")) {
+                        other = true;
+                        msg = bufferedReader.readLine();
+                    }
                     if (!(sosTasksS[i][1].equals(""))) {
+                        if (other) {
+                            sosTasksS[i][1] = sosTasksS[i][1] + "\n\nNotes:";
+                            other = false;
+                        }
                         sosTasksS[i][1] = sosTasksS[i][1] +"\n";
                     }
                 }
+
             }
         }else if (isSos.equals("no")) {
             sosTasks = false;
@@ -117,14 +131,12 @@ public class ServerConnection extends Thread {
                         }
                         msg = bufferedReader.readLine();
                     }
-                    //bufferedReader.readLine();
-                    //printWriter.println(".");
                     receivedTasks.add(i, new Tasks(name, description));
                 }
             }
         return receivedTasks;
-
     }
+
     public boolean isOnJob() {
         return onJob;
     }
@@ -142,11 +154,13 @@ public class ServerConnection extends Thread {
         return sosTasks;
     }
 
-    public void finishJob() {
+    public void finishJob(String notes) {
         if (currentTask.getSos()) {
             turnOffSos();
         }
         printWriter.println("Finish:"+currentTask.getTaskName());
+        printWriter.print(notes+"\n");
+        printWriter.println("done");
         currentTask = null;
         onJob = false;
     }

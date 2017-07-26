@@ -1,0 +1,104 @@
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+USE `eclassdb`;
+
+DROP TABLE IF EXISTS `junctiontable`;
+DROP TABLE IF EXISTS `workstudy`;
+DROP TABLE IF EXISTS `task`;
+
+
+--
+-- Table of Workstudy
+--
+CREATE TABLE `workstudy` (
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    password VARCHAR(255),
+    status BOOLEAN
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DESCRIBE `workstudy`;
+SHOW TABLE STATUS;
+SHOW CREATE TABLE `workstudy`;
+SHOW INDEXES FROM `workstudy`;
+SELECT LAST_INSERT_ID();
+
+INSERT INTO `workstudy` VALUES ( 0, 'Malcolm', 'malcolm01', FALSE);
+INSERT INTO `workstudy` VALUES ( 9, 'Kachail', 'kachail02', FALSE);
+INSERT INTO `workstudy` VALUES ( 2, 'Sean', 'sean03', FALSE);
+INSERT INTO `workstudy` VALUES ( 3, 'Aldous', 'aldous04', FALSE);
+INSERT INTO `workstudy` VALUES ( 4, 'Joe', 'joe05', FALSE);
+INSERT INTO `workstudy` VALUES ( 5, 'Daniel', 'daniel06', FALSE);
+INSERT INTO `workstudy` VALUES ( 6, 'Ali', 'ali07', FALSE);
+INSERT INTO `workstudy` VALUES ( 7, 'Bojan', 'bojan08', FALSE);
+INSERT INTO `workstudy` VALUES ( 8, 'Radika', 'radika09', FALSE);
+
+DESCRIBE `workstudy`;
+SHOW TABLE STATUS;
+SHOW CREATE TABLE `workstudy`;
+SHOW INDEXES FROM `workstudy`;
+SELECT LAST_INSERT_ID();
+SELECT * FROM workstudy;
+
+
+--
+-- Table for Tasks
+--
+CREATE TABLE `task` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    room VARCHAR(4),
+    note VARCHAR(255),
+    status BOOLEAN
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `task` VALUES ( 0, 'B314', 'A description of a problem placed here', FALSE);
+INSERT INTO `task` VALUES ( 2, 'D236', 'Another description of a problem placed here', FALSE);
+INSERT INTO `task` VALUES ( 3, 'E135', 'More descriptions of a problem placed here', FALSE);
+INSERT INTO `task` VALUES ( 4, 'F111', 'Constant description of a problem placed here', FALSE);
+INSERT INTO `task` VALUES ( 5, 'A123', 'Nothing', FALSE);
+
+DESCRIBE `task`;
+SHOW INDEXES FROM `task`;
+DESCRIBE `task`;
+SHOW TABLE STATUS;
+SHOW CREATE TABLE `task`;
+SELECT LAST_INSERT_ID();
+
+
+--
+--Junction Table 
+--
+
+CREATE TABLE `junctiontable` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    w_id INTEGER,
+    t_id INT,
+    stamp TIMESTAMP,
+    FOREIGN KEY (w_id) REFERENCES workstudy(id),
+    FOREIGN KEY (t_id) REFERENCES task(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DESCRIBE `junctiontable`;
+SHOW INDEXES FROM `junctiontable`;
+DESCRIBE `junctiontable`;
+SHOW TABLE STATUS;
+SHOW CREATE TABLE `junctiontable`;
+SELECT LAST_INSERT_ID();
+ 
+INSERT INTO `junctiontable` ( w_id, t_id ) VALUES ( 0, 5 );
+INSERT INTO `junctiontable` ( w_id, t_id ) VALUES ( 2, 4 );
+INSERT INTO `junctiontable` ( w_id, t_id ) VALUES ( 3, 3 );
+INSERT INTO `junctiontable` ( w_id, t_id ) VALUES ( 4, 2 );
+INSERT INTO `junctiontable` ( w_id, t_id ) VALUES ( 5, 0 );
+SELECT * FROM `junctiontable`;
+
+--
+--
+--
+SELECT J.id, J.stamp, w.name, t.room
+  FROM `junctiontable` AS J
+  LEFT JOIN `workstudy` AS w ON J.w_id = w.id
+  LEFT JOIN `task` AS t ON J.t_id = t.id
+;
